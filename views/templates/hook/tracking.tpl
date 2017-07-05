@@ -23,5 +23,13 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 {foreach from=$trackings item=tracking}
-<iframe src="https://lb.affilae.com/?key={$tracking.code|escape:'htmlall':'UTF-8'}&amp;id={$tracking.id|escape:'htmlall':'UTF-8'}&amp;amount={$tracking.total|escape:'htmlall':'UTF-8'}&amp;payment={$tracking.payment|escape:'htmlall':'UTF-8'}&amp;customer={$tracking.customerId|escape:'htmlall':'UTF-8'}" frameborder="0" width="1" height="1"></iframe>
+
+	{if $tracking.newCustomer == true }
+		<iframe src="https://lb.affilae.com/?key={$tracking.code|escape:'htmlall':'UTF-8'}&amp;id={$tracking.id|escape:'htmlall':'UTF-8'}&amp;amount={$tracking.total|escape:'htmlall':'UTF-8'}&amp;payment={$tracking.payment|escape:'htmlall':'UTF-8'}&amp;customer={$tracking.customerId|escape:'htmlall':'UTF-8'}" frameborder="0" width="1" height="1"></iframe>
+	{/if}
+
+	{if $tracking.newCustomer == false }
+		<iframe src="https://lb.affilae.com/?key={$tracking.codeOldCustomer|escape:'htmlall':'UTF-8'}&amp;id={$tracking.id|escape:'htmlall':'UTF-8'}&amp;amount={$tracking.total|escape:'htmlall':'UTF-8'}&amp;payment={$tracking.payment|escape:'htmlall':'UTF-8'}&amp;customer={$tracking.customerId|escape:'htmlall':'UTF-8'}" frameborder="0" width="1" height="1"></iframe>
+	{/if}
+
 {/foreach}

@@ -54,6 +54,7 @@ class Affilae extends Module
     {
         return Configuration::deleteByName('AFFILAE_RULES')
             && Configuration::deleteByName('AFFILAE_SCRIPT')
+            && Configuration::deleteByName('AFFILAE_SECOND_RULE')
             && parent::uninstall();
     }
 
@@ -62,8 +63,9 @@ class Affilae extends Module
         $currentIndex = $this->context->link->getAdminLink('AdminModules', false)
             . '&configure=' . $this->name . '&tab_module=' . $this->tab;
 
-        $script  = Configuration::get('AFFILAE_SCRIPT');
-        $rulesDb = Configuration::get('AFFILAE_RULES');
+        $script     = Configuration::get('AFFILAE_SCRIPT');
+        $rulesDb    = Configuration::get('AFFILAE_RULES');
+        $secondRule = Configuration::get('AFFILAE_SECOND_RULE');
 
         if ($rulesDb) {
             $rules = unserialize(Tools::stripslashes($rulesDb));
@@ -175,8 +177,20 @@ class Affilae extends Module
                     }
                 }
 
+                if (Tools::isSubmit('submitSecondRule')) {
+                    $submitValue = Tools::getValue('affilae_second_rule', null);
+                    if (!empty($submitValue)) {
+                        Configuration::updateValue('AFFILAE_SECOND_RULE', htmlentities(Tools::getValue('affilae_second_rule')));
+                        Tools::redirectAdmin($currentIndex.'&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules').'&successSecondRule=true');
+                    } else {
+                        Tools::redirectAdmin($currentIndex.'&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules'));
+                    }
+                }
+
                 $this->smarty->assign('script', html_entity_decode($script));
                 $this->smarty->assign('successScript', Tools::getValue('successScript', false));
+                $this->smarty->assign('secondRule', html_entity_decode($secondRule));
+                $this->smarty->assign('successSecondRule', Tools::getValue('successSecondRule', false));
                 $this->smarty->assign('successAdd', Tools::getValue('successAdd', false));
                 $this->smarty->assign('successEdit', Tools::getValue('successEdit', false));
                 $this->smarty->assign('successDelete', Tools::getValue('successDelete', false));
@@ -363,6 +377,21 @@ class Affilae extends Module
         return $method;
     }
 
+    /**
+     * Récupère les produits achetés uniquement si la commande est validée
+     * @param  (int)      $id_customer Id du client
+     * @return [array]    Tableau multidimensionnel des commandes effectuée
+     */
+    
+    private function getAllBoughtProducts($id_customer) 
+    {
+        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+          SELECT * FROM `'._DB_PREFIX_.'orders` o
+          LEFT JOIN `'._DB_PREFIX_.'order_detail` od ON o.id_order = od.id_order 
+          WHERE o.valid = 1 AND o.`id_customer` = '.(int)$id_customer.' AND o.`date_add` < \''.date('Y-m-d 00:00:00').'\''
+        );
+    }
+
     public function hookOrderConfirmation($params)
     {
         $rules = unserialize(Configuration::get('AFFILAE_RULES'));
@@ -374,6 +403,24 @@ class Affilae extends Module
         $order = $params['objOrder'];
         $orderId = $order->id;
         $customerId = $order->id_customer;
+
+        /**
+         * NEW : gestion du tracking des nouveaux et ancients clients 
+         */
+        $BoughtProducts  = $this->getAllBoughtProducts($customerId);
+        $codeOldCustomer = Configuration::get('AFFILAE_SECOND_RULE'); // Code de conversion pour la règle 'Tous les produits anciens clients'
+
+        // Si le tableau est vide : alors c'est un nouveau client
+        if (empty($BoughtProducts)) {
+            $newCustomer = true; // Nouveau client
+        }else {
+            $newCustomer = false; // Déjà client
+        }
+
+        // Active ou non la gestion du tracking des nouveaux et ancients clients 
+        if (empty($codeOldCustomer) || $codeOldCustomer == 'no') {
+          $newCustomer = true; // Nouveau client
+        } 
 
         $discount = (float) $order->total_discounts_tax_excl;
         $totalProducts = (float) $order->total_products;
@@ -438,11 +485,13 @@ class Affilae extends Module
                         $totalForThisRule = $totalForThisRule - $discountForThisRule;
 
                         $trackings[] = array(
-                            'code' => $ruleWithCategories['code'],
-                            'total' => $totalForThisRule,
-                            'id' => $orderId,
-                            'customerId' => $customerId,
-                            'payment' => $payment,
+                            'code'            => $ruleWithCategories['code'],
+                            'total'           => $totalForThisRule,
+                            'id'              => $orderId,
+                            'customerId'      => $customerId,
+                            'payment'         => $payment,
+                            'newCustomer'     => $newCustomer,
+                            'codeOldCustomer' => $codeOldCustomer
                         );
                     }
                 }
@@ -457,22 +506,26 @@ class Affilae extends Module
 
                     if ($totalRest > 0) {
                         $trackings[] = array(
-                            'code' => $otherRules[0]['code'],
-                            'total' => $totalRest,
-                            'id' => $orderId,
-                            'customerId' => $customerId,
-                            'payment' => $payment,
+                            'code'            => $otherRules[0]['code'],
+                            'total'           => $totalRest,
+                            'id'              => $orderId,
+                            'customerId'      => $customerId,
+                            'payment'         => $payment,
+                            'newCustomer'     => $newCustomer,
+                            'codeOldCustomer' => $codeOldCustomer
                         );
                     }
                 }
             } elseif (count($otherRules) > 0) {
                 foreach ($otherRules as $rule) {
                     $trackings[] = array(
-                        'code' => $rule['code'],
-                        'total' => $total,
-                        'id' => $orderId,
-                        'customerId' => $customerId,
-                        'payment' => $payment,
+                        'code'            => $rule['code'],
+                        'total'           => $total,
+                        'id'              => $orderId,
+                        'customerId'      => $customerId,
+                        'payment'         => $payment,
+                        'newCustomer'     => $newCustomer,
+                        'codeOldCustomer' => $codeOldCustomer
                     );
                 }
             }

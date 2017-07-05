@@ -29,6 +29,12 @@
 </div>
 {/if}
 
+{if $successSecondRule}
+<div class="alert alert-success">
+    {l s='Now, you can track old & new customers' mod='affilae'}
+</div>
+{/if}
+
 {if $successAdd}
 <div class="alert alert-success">
     {l s='Your new commission rule has been added' mod='affilae'}
@@ -75,8 +81,32 @@
                 <i class="process-icon-save"></i> {l s='Save' mod='affilae'}
             </button>
         </div>
-    </form>
-</div>
+    </div>
+</form>
+
+<form action="" method="post" class="defaultForm form-horizontal" id="affilae-second-rule">
+    <div class="panel">
+        <div class="panel-heading">
+            <i class="icon-cogs"></i> {l s='Old and new customers tracking ' mod='affilae'}
+        </div>
+
+        <div class="form-wrapper">
+            <div class="form-group">
+                <label class="control-label col-lg-6" for="affilae_second_rule">{l s='Rule for customers who has already bought something in this shop' mod='affilae'}</label>
+                <div class="col-lg-6">
+                    <input name="affilae_second_rule" type="text" class="" value="{if isset($secondRule)}{$secondRule|escape:'htmlall':'UTF-8'}{/if}" id="affilae_second_rule" />
+                    <p class="help-block">{l s='To disable, just write no in this input (no = disable) ' mod='affilae'}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <button type="submit" name="submitSecondRule" id="submitSecondRule" class="btn btn-default pull-right">
+                <i class="process-icon-save"></i> {l s='Save' mod='affilae'}
+            </button>
+        </div>
+    </div>
+</form>
 
 {capture name="delete_confirmation" assign="delete_confirmation"}{l s='Are you sure that you want to delete this commission rule?' mod='affilae'}{/capture}
 

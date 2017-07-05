@@ -22,6 +22,7 @@ $_MODULE['<{affilae}prestashop>form_6ff9dd0d34f65181173c1e4bc39939de'] = 'Sélec
 $_MODULE['<{affilae}prestashop>form_c9cc8cce247e49bae79f15173ce97354'] = 'Enregistrer';
 $_MODULE['<{affilae}prestashop>form_ea4788705e6873b424c65e91c2846b19'] = 'Annuler';
 $_MODULE['<{affilae}prestashop>list_8ba90f028ae1c697ba202cac2b4793a3'] = 'Votre script de sécurité vient d\'être mis à jour';
+$_MODULE['<{affilae}prestashop>list_69182a8ebd2ee8d6c7e8cbb05a4ea71a'] = 'Votre tracking des nouveaux et ancients clients est activé !';
 $_MODULE['<{affilae}prestashop>list_0439a6e42323e51cada1a2ae7f90ae5c'] = 'Votre nouvelle règle de commissionnement a été ajoutée';
 $_MODULE['<{affilae}prestashop>list_663e35a130aa25cc72c122ecd949b45b'] = 'Votre règle de commissionnement a été mise à jour';
 $_MODULE['<{affilae}prestashop>list_14b3d88802fd84cc77878694baa2d690'] = 'Votre règle de commissionnement a été supprimée';
@@ -31,6 +32,9 @@ $_MODULE['<{affilae}prestashop>list_69a45151eccc4588389146116cba036e'] = 'Le scr
 $_MODULE['<{affilae}prestashop>list_df0ffe77e67287e0ed7803f868427c01'] = 'Lorsqu\'une commande contient plusieurs produits soumis à des règles de commissionnements différentes, elle génère une conversion pour chacunes d\'entre elles au montant des produits concernés.';
 $_MODULE['<{affilae}prestashop>list_369bd183f6ddb3bbe09615cef5e4508e'] = 'Script de sécurité';
 $_MODULE['<{affilae}prestashop>list_c9cc8cce247e49bae79f15173ce97354'] = 'Enregistrer';
+$_MODULE['<{affilae}prestashop>list_46d8b2dcdd54462271d19839fac69083'] = 'Tracking des nouveaux et ancients clients';
+$_MODULE['<{affilae}prestashop>list_e2919650edea2dd9017dec21aeff65c8'] = 'Code de conversion pour les clients ayant déjà commandé dans cette boutique';
+$_MODULE['<{affilae}prestashop>list_59de1c7d0d5012d3bd199d7be726a870'] = 'Pour désactiver ce code, écrivez \'no\' (no = disable) ou laissez vide';
 $_MODULE['<{affilae}prestashop>list_3ff15e9b5479e5090b6e7819d813de11'] = 'Êtes-vous sûr de vouloir supprimer cette règle de commissionnement ?';
 $_MODULE['<{affilae}prestashop>list_41bfe8534bae2a83ec59a19e16095847'] = 'Règles de commissionnement';
 $_MODULE['<{affilae}prestashop>list_ab7a485ebe75b6dd7243ad719f23c7de'] = 'Règle';
